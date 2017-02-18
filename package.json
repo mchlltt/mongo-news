@@ -1,0 +1,28 @@
+{
+  "name": "mongo-news",
+  "version": "1.0.0",
+  "description": "A MongoDB-backed news scraper.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mchlltt/mongo-news.git"
+  },
+  "author": "mchlltt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mchlltt/mongo-news/issues"
+  },
+  "homepage": "https://github.com/mchlltt/mongo-news#readme",
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "cheerio": "^0.22.0",
+    "express": "^4.14.1",
+    "express-handlebars": "^3.0.0",
+    "mongoose": "^4.8.3",
+    "request": "^2.79.0",
+    "serve-favicon": "^2.3.2"
+  }
+}
