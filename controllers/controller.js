@@ -2,8 +2,10 @@ module.exports = function(app) {
     var request = require('request');
     var cheerio = require('cheerio');
 
+    // http://mongoosejs.com/
+
     app.get('/', function(req, res) {
-        // Making a request call for reddit's 'webdev' board. The page's HTML is saved as the callback's third argument
+        // Making a request call for Vox's news articles page. The page's HTML is saved as the callback's third argument
         request('https://www.vox.com/news', function(error, response, html) {
 
             // Load the HTML into cheerio and save it to a variable.

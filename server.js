@@ -29,8 +29,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 require('./controllers/controller.js')(app);
 
 // Start listening.
+mongoose.connect('mongodb://localhost/vox').then(function() {
 // mongoose.connect('mongodb://heroku_bcn7xp6x:mm2gqc6e2ceapg54uhqshm8rbr@ds019471.mlab.com:19471/heroku_bcn7xp6x').then(function() {
-app.listen(PORT, function() {
-    console.log('listening on port ' + PORT);
+    app.listen(PORT, function() {
+        console.log('listening on port ' + PORT);
+    });
 });
-// });
