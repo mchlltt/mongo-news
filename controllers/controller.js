@@ -21,15 +21,17 @@ module.exports = function(app) {
         });
     });
 
-    app.get('/api/delete', function() {
+    app.get('/api/delete', function(req, res) {
         Article.remove({}, function(err) {
             if (err) {
                 console.log(err);
+            } else {
+                res.redirect('/');
             }
         });
     });
 
-    app.get('/api/news', function() {
+    app.get('/api/news', function(req, res) {
         // Making a request call for Vox's news articles page. The page's HTML is saved as the callback's third argument
         request('https://www.vox.com/news', function(error, response, html) {
 
@@ -73,6 +75,11 @@ module.exports = function(app) {
                     }
                 });
             });
+
         });
+    });
+
+    app.use('*', function(req, res) {
+        res.redirect('/');
     });
 };
