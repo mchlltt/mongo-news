@@ -42,9 +42,13 @@ router.get('/:id', function(req, res) {
                 article_id: comment.article_id
             });
         });
-        // Add last item to the comment data array which is just the article_id, to be used in the post comment form.
-        commentData.push({article_url: id});
-        res.render('comment', {commentData: commentData});
+        db.Article.find({article_id: id}, function(err, data) {
+            var article_title = data[0].title;
+            var link = data[0].link;
+            // Add last item to the comment data array which is just the article_id, to be used in the post comment form.
+            commentData.push({article_url: id, article_title: article_title, link: link});
+            res.render('comment', {commentData: commentData});
+        });
     });
 });
 

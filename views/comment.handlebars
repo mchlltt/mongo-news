@@ -3,6 +3,16 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="response-section">
+                <div class="article-title container">
+                    {{#each commentData}}
+                        {{#if article_title}}
+                            <h4>
+                                Comments on
+                                <a href="{{link}}">{{article_title}}</a>
+                            </h4>
+                        {{/if}}
+                    {{/each}}
+                </div>
                 <div class="responses">
                     {{#each commentData}}
                         {{#if article_id}}
