@@ -5,7 +5,6 @@ var exphbs = require('express-handlebars');
 var favicon = require('serve-favicon');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var methodOverride = require('method-override');
 
 // Initialize app.
 var app = express();
@@ -26,11 +25,9 @@ app.use(favicon(path.join(__dirname, 'public/assets/img', 'favicon.png')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Method override.
-app.use(methodOverride('_method'));
-
 // Import routes and give the server access to them.
-require('./controllers/controller.js')(app);
+var routes = require('./controllers/controller');
+app.use('/', routes);
 
 // Start listening.
 mongoose.connect('mongodb://heroku_bcn7xp6x:mm2gqc6e2ceapg54uhqshm8rbr@ds019471.mlab.com:19471/heroku_bcn7xp6x').then(function() {

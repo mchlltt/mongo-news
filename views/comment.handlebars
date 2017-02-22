@@ -1,0 +1,20 @@
+<!-- Main Section -->
+<main>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="responses">
+                {{#each comment}}
+                    <div class="response container well">
+                        <div class="row">
+                            <div class="col-md-12 article-info">
+                                <h4><small>By {{author}}</small></h4>
+                                <p>{{text}}</p>
+                                <a href="/api/delete/{{id}}">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</main>

@@ -5,6 +5,7 @@ $(document).ready(function() {
     });
 
     $('.delete-button').on('click', function () {
-        $.get('api/delete');
-    })
+        $.post('api/delete');
+    });
+
 });

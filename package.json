@@ -24,6 +24,7 @@
     "method-override": "^2.3.7",
     "mongoose": "^4.8.3",
     "request": "^2.79.0",
+    "rsvp": "^3.3.3",
     "serve-favicon": "^2.3.2"
   }
 }

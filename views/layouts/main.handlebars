@@ -15,11 +15,17 @@
     <!-- HEADER -->
     <div class="page-header">
         <div class="container">
-            <h1>mongo news</h1>
-            <form method="GET">
-                <button class="btn btn-info update-button">Refresh Articles</button>
-                <button class="btn btn-danger delete-button">Delete Articles</button>
-            </form>
+            <div class="col-sm-6">
+                <h1>mongo news</h1>
+            </div>
+            <div class="col-sm-6 buttons">
+                <form method="GET">
+                    <button class="btn btn-info update-button">Refresh Articles</button>
+                </form>
+                <form method="POST">
+                    <button class="btn btn-danger delete-button">Clear Articles</button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -28,9 +34,11 @@
     <!-- FOOTER -->
 
     <footer>
-        <hr>
         <div class="container">
-            <h5>Made by Mich Elliott</h5>
+            <h5>
+                Serving the most recent news from <a href="https://vox.com/">Vox.</a>
+                <small> Made with ❤ by <a href="https://github.com/mchlltt">Mich Elliott</a>.</small>
+            </h5>
         </div>
     </footer>
 

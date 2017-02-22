@@ -1,10 +1,17 @@
-.article {
+html {
+    position: relative;
+    min-height: 100%
+}
+
+.article,
+.response {
     margin-bottom: 40px;
 }
 
 body {
     overflow-x: hidden;
     background: #444349 url('../img/stardust/stardust.png');
+    margin-bottom: 62px;
 }
 
 .page-header,
@@ -13,7 +20,53 @@ footer {
     background: none rgba(255, 255, 255, .4);
 }
 
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 62px;
+    border-top: 1px solid white;
+}
+
+footer .container {
+    height: 61px;
+    display: flex;
+    align-items: center;
+}
+
 img {
     width: 90%;
     border-radius: 4px;
+}
+
+.col-sm-6 {
+    display: flex;
+    align-items: center;
+    height: 78px;
+}
+
+.buttons {
+    justify-content: flex-end;
+}
+
+.update-button {
+    margin-right: 10px;
+}
+
+.col-sm-6,
+.page-header,
+.page-header .container {
+    padding: 0;
+}
+
+footer a {
+    color: inherit;
+}
+
+small {
+    font-size: 14px !important;
+}
+
+h1 {
+    margin: 0;
 }
