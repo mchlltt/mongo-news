@@ -4,8 +4,19 @@ html {
 }
 
 .article,
-.response {
+.response,
+.response-add-form {
     margin-bottom: 40px;
+    width: 90%;
+}
+
+.response-section {
+    background: none rgba(255, 255, 255, .3);
+    height: 100%;
+    padding-top: 40px;
+    margin: 10px auto;
+    border-radius: 4px;
+    width: 90%;
 }
 
 body {
@@ -49,17 +60,14 @@ img {
     justify-content: flex-end;
 }
 
-.update-button {
-    margin-right: 10px;
-}
-
 .col-sm-6,
 .page-header,
 .page-header .container {
     padding: 0;
 }
 
-footer a {
+footer a,
+.page-header a {
     color: inherit;
 }
 
@@ -69,4 +77,8 @@ small {
 
 h1 {
     margin: 0;
+}
+
+.container {
+    width: 90%;
 }

@@ -1,28 +1,18 @@
+// Import dependencies.
 var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
 var mongoose = require('mongoose');
 
+// Initialize express router.
 var router = express.Router();
 
-var Article = mongoose.model('Article', {
-    title: String,
-    blurb: String,
-    link: String,
-    author: String,
-    image: String,
-    article_id: String
-});
+// Import models.
+var db = require('../models/');
 
-var Comment = mongoose.model('Comment', {
-    author: String,
-    text: String,
-    timestamp: {type: Date, default: Date.now},
-    article_id: String
-});
-
+// Pulls article data from the database and uses it to render the index.
 router.get('/', function (req, res) {
-    Article.find({}, function (err, data) {
+    db.Article.find({}, function (err, data) {
         var resultData = [];
         data.forEach(function (article) {
             resultData.push({
@@ -38,16 +28,27 @@ router.get('/', function (req, res) {
     });
 });
 
-router.post('/api/delete', function (req, res) {
-    Article.remove({}, function (err) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.redirect('/');
-        }
+// Pulls comment data from the database and uses it to render the comment page.
+router.get('/:id', function(req, res) {
+    var id = req.params.id;
+    db.Comment.find({article_id: id}, function(err, data) {
+        var commentData = [];
+        data.forEach(function (comment) {
+            commentData.push({
+                id: comment._id,
+                author: comment.author,
+                text: comment.text,
+                timestamp: comment.timestamp,
+                article_id: comment.article_id
+            });
+        });
+        // Add last item to the comment data array which is just the article_id, to be used in the post comment form.
+        commentData.push({article_url: id});
+        res.render('comment', {commentData: commentData});
     });
 });
 
+// Scrapes data from vox.com/news.
 router.get('/api/news', function (req, res) {
     // Making a request call for Vox's news articles page. The page's HTML is saved as the callback's third argument
     request('https://www.vox.com/news', function (error, response, html) {
@@ -97,7 +98,7 @@ router.get('/api/news', function (req, res) {
             var query = {article_id: article_id};
 
             // Run that query. If matched, update with 'newArticle'. If no match, create with 'newArticle.'
-            Article.findOneAndUpdate(query, newArticle, {upsert: true}, function (err) {
+            db.Article.findOneAndUpdate(query, newArticle, {upsert: true}, function (err) {
                 if (err) {
                     console.log(err);
                 }
@@ -109,24 +110,9 @@ router.get('/api/news', function (req, res) {
     });
 });
 
-router.get('/comment/:id', function(req, res) {
-    var id = req.params.id;
-    Comment.find({article_id: id}, function(err, data) {
-        var commentData = [];
-        data.forEach(function (comment) {
-            commentData.push({
-                id: comment._id,
-                author: comment.author,
-                text: comment.text,
-                timestamp: comment.timestamp
-            });
-        });
-        res.render('comment', {comment: commentData});
-    });
-});
-
-router.post('/api/comment/', function(req, res) {
-    var article_id = req.body.article_id;
+// Add new comment.
+router.post('/api/comment/:article', function(req, res) {
+    var article_id = req.params.article;
     var text = req.body.text;
     var author = req.body.author;
 
@@ -136,29 +122,45 @@ router.post('/api/comment/', function(req, res) {
         author: author
     };
 
-    Comment.create(newComment, function(err, data) {
+    db.Comment.create(newComment, function(err, data) {
         if (err) {
             console.log(err);
         } else {
-            res.json(data);
+            console.log(data);
+            res.redirect('/' + article_id);
         }
     });
 
 });
 
-router.delete('/api/comment/:id', function(req, res) {
-    var id = req.params.id;
-    Comment.remove({_id: id}, function(err, data) {
+// Delete comment.
+router.get('/api/comment/:article/:comment', function(req, res) {
+    var id = req.params.comment;
+    var article_id = req.params.article;
+    db.Comment.remove({_id: id}, function(err) {
         if (err) {
             console.log(err);
         } else {
-            res.json(data);
+            res.redirect('/' + article_id);
         }
     });
 });
 
+// Default route.
 router.use('*', function (req, res) {
     res.redirect('/');
 });
 
+// Clears database of articles.
+// router.post('/api/delete-articles', function (req, res) {
+//     db.Article.remove({}, function (err) {
+//         if (err) {
+//             console.log(err);
+//         } else {
+//             res.redirect('/');
+//         }
+//     });
+// });
+
+// Export routes.
 module.exports = router;

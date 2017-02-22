@@ -4,8 +4,8 @@ $(document).ready(function() {
         $.get('api/news');
     });
 
-    $('.delete-button').on('click', function () {
-        $.post('api/delete');
-    });
+    // $('.delete-button').on('click', function () {
+    //     $.post('api/delete-articles');
+    // });
 
 });

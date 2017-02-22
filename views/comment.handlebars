@@ -2,18 +2,40 @@
 <main>
     <div class="row">
         <div class="col-xs-12">
-            <div class="responses">
-                {{#each comment}}
-                    <div class="response container well">
-                        <div class="row">
-                            <div class="col-md-12 article-info">
-                                <h4><small>By {{author}}</small></h4>
-                                <p>{{text}}</p>
-                                <a href="/api/delete/{{id}}">Delete</a>
+            <div class="response-section">
+                <div class="responses">
+                    {{#each commentData}}
+                        {{#if article_id}}
+                        <div class="response container well">
+                            <div class="row">
+                                <div class="col-md-12 article-info">
+                                    <h4><small>By {{author}} at {{timestamp}}</small></h4>
+                                    <p>{{text}}</p>
+                                    <a href="/api/comment/{{article_id}}/{{id}}">Delete</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {{/each}}
+                        {{/if}}
+                    {{/each}}
+                </div>
+                <div class="response-add-form container well">
+                    {{#each commentData}}
+                        {{#if article_url}}
+                            <form class="add-form" action="/api/comment/{{article_url}}" method="POST">
+                                <div class="form-group">
+                                    <label for="text">Comment:</label>
+                                    <input type="text" id="text" name="text" placeholder="Write a comment..." class="form-control" maxlength="130">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="author">Your Name:</label>
+                                    <input type="text" id="author" name="author" placeholder="Your name" class="form-control" maxlength="30">
+                                </div>
+                                <button type="submit" class="btn btn-danger">Post Comment</button>
+                            </form>
+                        {{/if}}
+                    {{/each}}
+                </div>
             </div>
         </div>
     </div>
