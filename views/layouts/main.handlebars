@@ -19,12 +19,11 @@
                 <h1><a href="/">mongo news</a></h1>
             </div>
             <div class="col-sm-6 buttons">
-                <form method="GET">
-                    <button class="btn btn-info update-button">Refresh Articles</button>
+                <form method="GET" action="/api/news">
+                <button class="btn btn-info update-button">
+                    <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                </button>
                 </form>
-                <!--<form method="POST">-->
-                    <!--<button class="btn btn-danger delete-button">Clear Articles</button>-->
-                <!--</form>-->
             </div>
         </div>
     </div>
@@ -37,14 +36,13 @@
         <div class="container">
             <h5>
                 Serving the most recent news from <a href="https://vox.com/">Vox.</a>
-                <small> Made with ❤ by <a href="https://github.com/mchlltt">Mich Elliott</a>.</small>
+                <small> Made with <span class="glyphicon glyphicon-heart" aria-hidden="true"></span> by <a href="https://github.com/mchlltt">Mich Elliott</a>.</small>
             </h5>
         </div>
     </footer>
 
     <!--  Scripts-->
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="assets/js/frontend.js"></script>
 </body>
 
 </html>

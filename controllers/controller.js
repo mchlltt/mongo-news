@@ -8,12 +8,16 @@ var mongoose = require('mongoose');
 var router = express.Router();
 
 // Import models.
-var db = require('../models/');
+var Article = require('../models/article');
+var Comment = require('../models/comment');
 
 // Pulls article data from the database and uses it to render the index.
 router.get('/', function (req, res) {
-    db.Article.find({}, function (err, data) {
+    // Find all articles.
+    Article.find({}, function (err, data) {
+        // Create array for article data.
         var resultData = [];
+        // For each article, create an object that handlebars will use to render the article.
         data.forEach(function (article) {
             resultData.push({
                 title: article.title,
@@ -21,72 +25,88 @@ router.get('/', function (req, res) {
                 blurb: article.blurb,
                 author: article.author,
                 image: article.image,
-                article_id: article.article_id
+                articleID: article.articleID
             });
         });
+        // Render index based on the result object compiled above.
         res.render('index', {result: resultData});
     });
 });
 
 // Pulls comment data from the database and uses it to render the comment page.
 router.get('/:id', function(req, res) {
+    // ID is the article ID.
     var id = req.params.id;
-    db.Comment.find({article_id: id}, function(err, data) {
-        var commentData = [];
-        data.forEach(function (comment) {
-            commentData.push({
-                id: comment._id,
-                author: comment.author,
-                text: comment.text,
-                timestamp: comment.timestamp,
-                article_id: comment.article_id
+    // Find all comments for that article ID.
+    Article.find({articleID: id}).populate('comments').exec(function(err, data) {
+        if (err) {
+            console.log(err);
+        } else {
+            var commentData = [];
+            console.log(data[0].comments);
+            data[0].comments.forEach(function(comment) {
+                commentData.push({
+                    id: comment._id,
+                    author: comment.author,
+                    text: comment.text,
+                    timestamp: comment.timestamp
+                });
             });
-        });
-        db.Article.find({article_id: id}, function(err, data) {
-            var article_title = data[0].title;
+
+            var articleTitle = data[0].title;
             var link = data[0].link;
-            // Add last item to the comment data array which is just the article_id, to be used in the post comment form.
-            commentData.push({article_url: id, article_title: article_title, link: link});
+            commentData.push({articleURL: id, articleTtitle: articleTitle, link: link});
+
             res.render('comment', {commentData: commentData});
-        });
+        }
     });
 });
 
 // Scrapes data from vox.com/news.
 router.get('/api/news', function (req, res) {
-    // Making a request call for Vox's news articles page. The page's HTML is saved as the callback's third argument
+    // Make a request to vox.com/news.
     request('https://www.vox.com/news', function (error, response, html) {
 
-        // Load the HTML into cheerio and save it to a variable.
-        // '$' becomes a shorthand for cheerio's selector commands, much like jQuery's '$'
+        // Load the html of the page into a cheerio $ variable, similar to jQuery $.
         var $ = cheerio.load(html);
 
         // With cheerio, find each div with the 'm-block' class.
         // (i: iterator. element: the current element)
         $('.m-block').each(function (i, element) {
 
+            // Grab the title.
             var title = $(element).children('.m-block__body').children('header').children('h3').text();
 
+            // Grab the article URL.
             var link = $(element).children('.m-block__body').children('header').children('h3').children('a').attr('href');
 
+            // Grab the article blurb.
             var blurb = $(element).children('.m-block__body').children('.m-block__body__blurb').text();
 
+            // Create an author array.
             var author = [];
 
+            // Grab the byline section.
             var authorsObject = $(element).children('.m-block__body').children('.m-block__body__byline').children('a');
 
-            if (authorsObject.length == 1) {
+            // If the byline section is only one item, set its text to the author variable.
+            if (authorsObject.length === 1) {
                 author = authorsObject.text();
+            // If the byline section has multiple items,
             } else {
+                // Iterate through its items, pushing the text of each to the author object.
                 for (var j = 0; j < authorsObject.length; j++) {
                     author.push(authorsObject[j].children[0].data);
                 }
+                // Then join the authors with ampersands.
                 author = author.join(' & ');
             }
 
+            // Grab the image URL.
             var image = $(element).children('.m-block__image').children('a').children('img').data('original');
 
-            var article_id = $(element).children('.m-block__body').children('.m-block__body__byline').children('span').data('remote-admin-entry-id');
+            // Grab the article's unique ID.
+            var articleID = $(element).children('.m-block__body').children('.m-block__body__byline').children('span').data('remote-admin-entry-id');
 
             // Save these results in an object that we'll save to MongoDB.
             var newArticle = {
@@ -95,14 +115,14 @@ router.get('/api/news', function (req, res) {
                 blurb: blurb,
                 author: author,
                 image: image,
-                article_id: article_id
+                articleID: articleID
             };
 
             // We're going to query the Article collection for an article by this ID.
-            var query = {article_id: article_id};
+            var query = {articleID: articleID};
 
             // Run that query. If matched, update with 'newArticle'. If no match, create with 'newArticle.'
-            db.Article.findOneAndUpdate(query, newArticle, {upsert: true}, function (err) {
+            Article.findOneAndUpdate(query, newArticle, {upsert: true}, function (err) {
                 if (err) {
                     console.log(err);
                 }
@@ -116,22 +136,27 @@ router.get('/api/news', function (req, res) {
 
 // Add new comment.
 router.post('/api/comment/:article', function(req, res) {
-    var article_id = req.params.article;
+    var articleID = req.params.article;
     var text = req.body.text;
     var author = req.body.author;
 
     var newComment = {
-        article_id: article_id,
         text: text,
         author: author
     };
 
-    db.Comment.create(newComment, function(err, data) {
+    Comment.create(newComment, function(err, data) {
         if (err) {
             console.log(err);
         } else {
-            console.log(data);
-            res.redirect('/' + article_id);
+            Article.findOneAndUpdate({articleID: articleID}, { $push: { 'comments': data._id } }, { new: true }, function(error, doc) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log(doc);
+                    res.redirect('/' + articleID);
+                }
+            });
         }
     });
 
@@ -140,12 +165,12 @@ router.post('/api/comment/:article', function(req, res) {
 // Delete comment.
 router.get('/api/comment/:article/:comment', function(req, res) {
     var id = req.params.comment;
-    var article_id = req.params.article;
-    db.Comment.remove({_id: id}, function(err) {
+    var articleID = req.params.article;
+    Comment.remove({_id: id}, function(err) {
         if (err) {
             console.log(err);
         } else {
-            res.redirect('/' + article_id);
+            res.redirect('/' + articleID);
         }
     });
 });
@@ -154,17 +179,6 @@ router.get('/api/comment/:article/:comment', function(req, res) {
 router.use('*', function (req, res) {
     res.redirect('/');
 });
-
-// Clears database of articles.
-// router.post('/api/delete-articles', function (req, res) {
-//     db.Article.remove({}, function (err) {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             res.redirect('/');
-//         }
-//     });
-// });
 
 // Export routes.
 module.exports = router;

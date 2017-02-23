@@ -7,13 +7,17 @@
                     <div class="article container well">
                         <div class="row">
                             <div class="col-md-9 article-info">
-                                <a href="{{link}}"><h4>{{title}}</h4></a>
-                                <h4><small>By {{author}}</small></h4>
-                                <p>{{blurb}}</p>
-                                <a href="/{{article_id}}">Comment</a>
+                                <div class="article-name">
+                                    <a href="{{link}}"><h4>{{title}}</h4></a>
+                                    <h4><small>By {{author}}</small></h4>
+                                    <p>{{blurb}}</p>
+                                </div>
+                                <div class="comment-link">
+                                    <a href="/{{articleID}}">Comments</a>
+                                </div>
                             </div>
                             <div class="col-md-3">
-                                <a href="{{link}}"><img src="{{image}}" class="center-block"></a>
+                                <a href="{{link}}"><img src="{{image}}" class="center-block article-image"></a>
                             </div>
                         </div>
                     </div>

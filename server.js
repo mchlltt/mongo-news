@@ -6,6 +6,9 @@ var favicon = require('serve-favicon');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
+// Tell Mongoose to use ES6 promises.
+mongoose.Promise = Promise;
+
 // Initialize app.
 var app = express();
 
