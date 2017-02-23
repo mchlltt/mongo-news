@@ -82,3 +82,9 @@ h1 {
 .container {
     width: 90%;
 }
+
+@media only screen and (max-width: 991px) {
+    img {
+        width: 100%;
+    }
+}

@@ -15,7 +15,7 @@
                 </div>
                 <div class="responses">
                     {{#each commentData}}
-                        {{#if articleID}}
+                        {{#if author}}
                         <div class="response container well">
                             <div class="row">
                                 <div class="col-md-12 article-info">
@@ -30,8 +30,8 @@
                 </div>
                 <div class="response-add-form container well">
                     {{#each commentData}}
-                        {{#if articleURL}}
-                            <form class="add-form" action="/api/comment/{{articleURL}}" method="POST">
+                        {{#if articleTitle}}
+                            <form class="add-form" action="/api/comment/{{articleID}}" method="POST">
                                 <div class="form-group">
                                     <label for="author">Name:</label>
                                     <input type="text" id="author" name="author" placeholder="Your name" class="form-control" maxlength="30">

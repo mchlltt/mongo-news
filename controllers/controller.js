@@ -14,7 +14,7 @@ var Comment = require('../models/comment');
 // Pulls article data from the database and uses it to render the index.
 router.get('/', function (req, res) {
     // Find all articles.
-    Article.find({}, function (err, data) {
+    Article.find({}).sort({_id: 'desc'}).exec(function (err, data) {
         // Create array for article data.
         var resultData = [];
         // For each article, create an object that handlebars will use to render the article.
@@ -36,28 +36,32 @@ router.get('/', function (req, res) {
 // Pulls comment data from the database and uses it to render the comment page.
 router.get('/:id', function(req, res) {
     // ID is the article ID.
-    var id = req.params.id;
+    var articleID = req.params.id;
     // Find all comments for that article ID.
-    Article.find({articleID: id}).populate('comments').exec(function(err, data) {
+    Article.find({articleID: articleID}).populate('comments').exec(function(err, data) {
         if (err) {
             console.log(err);
         } else {
-            var commentData = [];
-            console.log(data[0].comments);
-            data[0].comments.forEach(function(comment) {
-                commentData.push({
-                    id: comment._id,
-                    author: comment.author,
-                    text: comment.text,
-                    timestamp: comment.timestamp
+            if (data.length > 0) {
+                var commentData = [];
+                data[0].comments.forEach(function(comment) {
+                    commentData.push({
+                        id: comment._id,
+                        author: comment.author,
+                        text: comment.text,
+                        timestamp: comment.timestamp,
+                        articleID: articleID
+                    });
                 });
-            });
 
-            var articleTitle = data[0].title;
-            var link = data[0].link;
-            commentData.push({articleURL: id, articleTtitle: articleTitle, link: link});
+                var articleTitle = data[0].title;
+                var link = data[0].link;
+                commentData.push({articleID: articleID, articleTitle: articleTitle, link: link});
 
-            res.render('comment', {commentData: commentData});
+                res.render('comment', {commentData: commentData});
+            } else {
+                res.redirect('/');
+            }
         }
     });
 });
@@ -149,11 +153,10 @@ router.post('/api/comment/:article', function(req, res) {
         if (err) {
             console.log(err);
         } else {
-            Article.findOneAndUpdate({articleID: articleID}, { $push: { 'comments': data._id } }, { new: true }, function(error, doc) {
+            Article.findOneAndUpdate({articleID: articleID}, { $push: { 'comments': data._id } }, { new: true }, function(error) {
                 if (error) {
                     console.log(error);
                 } else {
-                    console.log(doc);
                     res.redirect('/' + articleID);
                 }
             });
@@ -170,7 +173,14 @@ router.get('/api/comment/:article/:comment', function(req, res) {
         if (err) {
             console.log(err);
         } else {
-            res.redirect('/' + articleID);
+            Article.findOneAndUpdate({articleID: articleID}, { $pull: { comments: id } }, {safe: true}, function(error, data) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log(data);
+                    res.redirect('/' + articleID);
+                }
+            });
         }
     });
 });
