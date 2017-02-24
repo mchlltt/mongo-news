@@ -37,9 +37,8 @@ var connectionString;
 if (process.env.PORT) {
     connectionString = 'mongodb://heroku_bcn7xp6x:mm2gqc6e2ceapg54uhqshm8rbr@ds019471.mlab.com:19471/heroku_bcn7xp6x';
 } else {
-    connectionString = 'mongodb://localhost/mongonews');
+    connectionString = 'mongodb://localhost/mongonews';
 }
-
 
 // Start listening.
 mongoose.connect(connectionString).then(function() {
